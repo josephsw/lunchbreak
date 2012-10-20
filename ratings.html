@@ -13,12 +13,13 @@
 
 			<div id=main>
 				<div id=eventname>Rate Restaurants</div>
-					<p><b>Restaurant Name: </b>
+					<b>Restaurant Name: </b>
+                                            <form action="/sign" method="post">
 						{% for rest in restaurants %}
-							<br><a href="/ratings?name={{ rest[0].name }}">{{ rest[0].name }}</a> &nbsp;&nbsp;&nbsp; {{ rest[1] }}
+							<br><a href="/ratings?name={{ rest[0].name }}">{{ rest[0].name }}</a> <input type="radio" name="{{ rest[0].name }}" value="1">1<input type="radio" name="{{ rest[0].name }}" value="2">2<input type="radio" name="{{ rest[0].name }}" value="3">3<input type="radio" name="{{ rest[0].name }}" value="4">4<input type="radio" name="{{ rest[0].name }}" value">5&nbsp;&nbsp;&nbsp; {{ rest[1] }}
 						{% endfor %}
-					</p>
-				</form>
+                                                <div><input type="submit" value="Update Ratings!"></div>
+                                            </form>
 			</div>
 			<div id=footer>
 			    <a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a> | <a href="{{ editPreferences }}">User Profile</a>
