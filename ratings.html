@@ -10,10 +10,9 @@
 			<img src="/images/header.PNG" alt="header" >
 			</a>
 			</div>
-		
+
 			<div id=main>
-				<h1><b>Rate Restaurants</b></h1>
-				
+				<div id=eventname>Rate Restaurants</div>
 					<p><b>Restaurant Name: </b>
 						{% for rest in restaurants %}
 							<br><a href="/ratings?name={{ rest[0].name }}">{{ rest[0].name }}</a> &nbsp;&nbsp;&nbsp; {{ rest[1] }}
@@ -22,7 +21,7 @@
 				</form>
 			</div>
 			<div id=footer>
-				<a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a>
+			    <a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a> | <a href="{{ editPreferences }}">User Profile</a>
 			</div>
 		</div>
 	</body>
