@@ -5,25 +5,42 @@
 	</head>
 	<body>
 		<div id=wrapper>
-			<div id=header>
-			<a href="/">
-			<img src="/images/header.PNG" alt="header" >
-			</a>
-			</div>
-		
+			<div id=header><a href="/"><img src="/images/header.PNG" alt="header" ></a></div>
 			<div id=main>
-				<h1><b>{{ eventName }}</b></h1>
-				<p><b>Date: </b>{{ eventDate }}</p>
-				<p><b>Time: </b>{{ time }}</p>
-				<p><b>Lockdown Time: </b>{{ lockdownTime }}</p>
-				<p><b>Attending: </b> {% for person in attending %}
-				<br>- {{ person }}
-				{% endfor %}</p>	
-				<br><b>Are you coming?!</b>
-				<br>Yes &nbsp;&nbsp;&nbsp;&nbsp; No
+				<div id=eventName><b>{{ eventName }}</b></div>
+				<div style="width: 100%; float: left;">
+					<div style="width: 48%; float: left; padding: 5px;">
+						<div class=attendingList>
+							<b>Are you coming?!</b>
+							<br>
+							<div class=createevent>Yes</div>
+							<div class=createevent>No</div>
+							<br>
+							<b>You are {not/nothing }attending!</b>
+						</div>
+						<br />
+						<div class=attendingList style="padding: 5px;">
+							<b>Attending: </b> {% for person in attending %}
+							<br>- {{ person }}
+							{% endfor %}
+						</div>
+					</div>
+					<div style="width: 48%; height: auto; float: left; padding: 5px;">
+						<div class=attendingList>
+							<b>Date: </b>{{ eventDate }}<br>
+							<b>Time: </b>{{ time }}<br>
+							<b>RSVP Deadline: </b>{{ lockdownTime }} on {{ eventDate }}<br>
+						</div>
+						<br>
+						<div class=attendingList>
+							INSERT MAP HERE
+						</div>
+					</div>					
+				</div>
 			</div>
 			<div id=footer>
-				  <a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a> | <a href="/">User Profile</a>			</div>
+			    <a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a> | <a href="{{ editPreferences }}">User Profile</a>
+			</div>
 		</div>
 	</body>
 </html>
