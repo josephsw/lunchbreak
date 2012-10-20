@@ -21,6 +21,13 @@
   padding: 3px;
 }
 
+#eventPage {
+  width: 760px;
+  vertical-align: middle;
+  margin: auto;
+  padding: 3px;
+  border: 1px blue solid;
+}
 #loginPage {
   width: auto;
   vertical-align: middle;
@@ -40,6 +47,23 @@
 #welcomeMessage {
   padding: 5px;
   text-align: center;
+}
+
+#eventName {
+  padding: 5px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 37px;
+}
+
+a:visited {
+  color: teal;
+}
+
+#column1 .column2 {
+  width: 74px;
+  background: yellow;
+  border: dashed 5px green;
 }
 
 #eventList {
@@ -64,6 +88,18 @@
   font-weight: 600;
   border-top: solid black 1px;
   border-bottom: solid black 1px;
+}
+
+.attendingList {
+    text-align: center;
+    vertical-align: middle;
+    width: 100%
+    margin: auto;
+    border: 5px solid black;
+    	-moz-border-radius:15px;
+	-webkit-border-radius:15px;
+	border-radius:15px;
+        padding: 7px;
 }
 .loginButton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -128,8 +164,6 @@
   width: 760px;
   vertical-align: middle;
   margin: auto;
-  border-top: solid 3px black; 
   font-size: 12pt;
   text-align: center;
 }
-
