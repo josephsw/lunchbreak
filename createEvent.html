@@ -12,19 +12,18 @@
 			</div>
 		
 			<div id=main>
-				<div id=eventname>Create an Event</div>
-				<form action="/sign" method="post">
-					<b>Name of Event: </b><div><textarea name="eventName" rows="1" cols="20"></textarea></div>
-					<b>Date: </b><div><textarea name="date" rows="1" cols="20"></textarea></div>
-					<b>Time: </b><div><textarea name="time" rows="1" cols="20"></textarea></div>
-					<b>Lockdown Time: </b><div><textarea name="lockdownTime" rows="1" cols="20"></textarea></div>
-					<b>Invite: </b><div><textarea name="invite" rows=variable cols="20"></textarea></div>
+				<h1><b>Create an Event</b></h1>
+				<form action="/create" method="post">
+					<b>Name of Event: </b><div><textarea name="eventname" rows="1" cols="20"></textarea></div>
+					<b>Date: </b><div><textarea name="eventdate" rows="1" cols="20"></textarea></div>
+					<b>Time: </b><div><textarea name="eventtime" rows="1" cols="20"></textarea></div>
+					<b>Lockdown Time: </b><div><textarea name="lockdowntime" rows="1" cols="20"></textarea></div>
+					<b>Invite: </b><div><textarea name="invited" rows="1" cols="20"></textarea></div>
 					<div><input type="submit" value="Submit!"></div>
 				</form>	
 			</div>
 			<div id=footer>
-			    <a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a> | <a href="{{ editPreferences }}">User Profile</a>
-			</div>
+				<a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a> | <a href="/">User Profile</a>			</div>
 		</div>
 	</body>
 </html>

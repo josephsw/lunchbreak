@@ -4,6 +4,7 @@ import jinja2
 import os
 import urllib
 import datetime
+
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -54,7 +55,8 @@ class EditPreferences(webapp2.RequestHandler):
         template_values = {
             'displayname': display_name,
             'phonenumber': phone_number,
-            'textalerts': text_alerts
+            'textalerts': text_alerts,
+            'editPreferences': '/preferences' 
         }
         template = jinja_environment.get_template('editPreferences.html')
         self.response.out.write(template.render(template_values))
@@ -95,6 +97,8 @@ class MainPage(webapp2.RequestHandler):
             'url': url,
             'users': users,
             'createEvent': '/create',
+            'editRatings': '/ratings',
+            'editPreferences': '/preferences' 
         }
         #'events': events,
         template = jinja_environment.get_template('index.html')
@@ -107,7 +111,8 @@ class CreateEvent(webapp2.RequestHandler):
             'eventName': 'Where are we going for lunch',
             'time': '11:00AM',
             'lockdownTime':'10:30AM',
-            #'inviteList': inviteList,
+            #'inviteList': inviteList,,
+            'editPreferences': '/preferences' 
         }
         template2 = jinja_environment.get_template('createEvent.html')
         self.response.out.write(template2.render(template_values2))
@@ -122,6 +127,7 @@ class EventPage(webapp2.RequestHandler):
             'time': '11:00AM',
             'lockdownTime':'10:30AM',
             'attending': attending,
+            'editPreferences': '/preferences' 
         }
         template3 = jinja_environment.get_template('eventPage.html')
         self.response.out.write(template3.render(template_values3))
@@ -152,32 +158,110 @@ class Rating(db.Model):
   
 def rating_key(user):
   return db.Key.from_path('User', user)
-
+		
 class Ratings(webapp2.RequestHandler):
   def get(self):
     current_user = get_current_user_User()
-    rating_query = Rating.all().ancestor(
-              rating_key(current_user.email))
+    rating_query = Rating.all().ancestor(rating_key(current_user.email))
     ratings = rating_query.fetch(30)
     restaurants = Restaurant.all().ancestor(restaurant_key()).fetch(40)
     res_rating = []
     for x in ratings:
-      restaurant = find(lambda res: res.name == x.restaurantID, restaurants)
-      res_rating.append((restaurant, x))
-      restaurants.remove(restaurant)
+      restaurant = filter(lambda res: res.name == x.restaurantID, restaurants)
+      if len(restaurant) > 0:
+        res_rating.append((restaurant[0], x))
+        restaurants.remove(restaurant[0])
     for x in restaurants:
       res_rating.append((x,))
     
     template_values3 = {
-      'restaurants': res_rating
+      'restaurants': res_rating,
+      'editPreferences': '/preferences' 
     }
     template3 = jinja_environment.get_template('ratings.html')
     self.response.out.write(template3.render(template_values3))
+
+  def post(self):
+    current_user = get_current_user_User()
+    rating_query = Rating.all().ancestor(rating_key(current_user.email))
+    ratings = rating_query.fetch(40)
+    rating = Rating(rating_key(current_user.email))
+    for x in ratings:
+        val = filter(lambda rat: rat.restaurantID == self.request.get('restaurantID'), ratings)
+        if len(val) == 0:
+          rating = Rating(rating_key(current_user.email))
+        else:
+          rating = val[0]
+    rating.restaurantID = self.request.get('restaurantID')
+    rating.rating = int(self.request.get('rating'))
+    rating.put()
+    self.redirect('/ratings')
+
+
+class Review(webapp2.RequestHandler):
+  def get(self):
+    current_user = get_current_user_User()
+    res = self.request.get('restaurantID')
+    rating_query = Rating.all().ancestor(rating_key(current_user.email))
+    my_list = rating_query.fetch(40)
+    rating = filter(lambda rat: rat.restaurantID == res, my_list)
+    if len(rating) > 0:
+      rating = Rating(rating_key(current_user.email))
+      rating.rating = 0
+    else:
+      rating = rating[0]
+    template_values3 = {
+      'restaurantname': res,
+      'rating': rating.rating,
+      'editPreferences': '/preferences' 
+    }
+    template3 = jinja_environment.get_template('restaurant.html')
+    self.response.out.write(template3.render(template_values3))
+		
+class Event (db.Model):
+  name = db.StringProperty()
+  eventdate = db.DateTimeProperty()
+  eventtime = db.DateTimeProperty()
+  location = db.StringProperty()
+  lockdowntime = db.DateTimeProperty
+  invited = db.StringListProperty()
+  attending = db.StringListProperty()
+
+def event_key():
+  return db.Key.from_path('Events', 'default_event')  
+
+class CreateEvent(webapp2.RequestHandler):
+    def get(self):
+        #create an event!
+        template2 = jinja_environment.get_template('createEvent.html')
+        self.response.out.write(template2.render())
+    def post(self):
+        event = Event(parent=event_key())
+        event.name = self.request.get('name')
+        rawdate = self.request.get('eventdate')
+        rawtime = self.request.get('eventtime')
+        d = rawdate.split('/')
+        t = rawtime.split(':')
+        event.eventtime = datetime.datetime(int(d[2]), int(d[0]), int(d[1]), int(t[0]), int(t[1]))
+        event.location = ''
+        event.lockdowntime = self.request.get('lockdowntime')
+        invitees = self.request.get('invited')
+        listOfPeople = invitees.split(',')
+        invited2 = []
+        for i in listOfPeople:
+          i.strip()
+          invited2.append(i)
+        event.invited = invited2
+        event.attending = [get_current_user_User().email,]
+        event.put()
+        self.redirect('/')
+        #self.redirect('/?' + urllib.urlencode({'name': event.name}))
 
 app = webapp2.WSGIApplication([('/', MainPage),
                               ('/create', CreateEvent),
                                ('/preferences', EditPreferences),
                               ('/viewevent', EventPage),
                                ('/restaurants',Restaurants),
-                               ('/ratings', Ratings)],
+                               ('/ratings', Ratings),
+				('/review', Review)],
                               debug=True)
