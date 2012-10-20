@@ -5,7 +5,7 @@
 	</head>
 	<body>
 		<div id=wrapper>
-			<div id=header><a href="/"><img src="/images/header.PNG" alt="header" ></a></div>
+			<div id=header><a href="/"><img src="/images/header.png" alt="header" ></a></div>
 			<div id=main>
 				<div id=eventName><b>{{ eventName }}</b></div>
 				<div style="width: 100%; float: left;">
@@ -16,7 +16,6 @@
 							<div class=createevent>Yes</div>
 							<div class=createevent>No</div>
 							<br>
-							<b>You are {not/nothing }attending!</b>
 						</div>
 						<br />
 						<div class=attendingList style="padding: 5px;">
@@ -33,7 +32,7 @@
 						</div>
 						<br>
 						<div class=attendingList>
-							INSERT MAP HERE
+							<form><input type="submit" name="name" value="{{eventname}}">Send a text</form>
 						</div>
 					</div>					
 				</div>

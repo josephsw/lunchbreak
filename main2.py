@@ -5,6 +5,8 @@ import os
 import urllib
 import datetime
 
+from twilio.rest import TwilioRestClient
+
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -17,6 +19,19 @@ class User(db.Model):
   events = db.ListProperty(db.Key)
   attending = db.ListProperty(db.Key)
   textalerts = db.StringProperty()
+
+
+class Event (db.Model):
+  name = db.StringProperty()
+  eventdate = db.DateTimeProperty()
+  eventtime = db.DateTimeProperty()
+  location = db.StringProperty()
+  lockdowntime = db.DateTimeProperty
+  invited = db.StringListProperty()
+  attending = db.StringListProperty()
+  
+def event_key():
+  return db.Key.from_path('Events', 'default_event')  
 
 def get_current_user_User():
 
@@ -70,7 +85,22 @@ class EditPreferences(webapp2.RequestHandler):
         query_result.textalerts = self.request.get('textalerts')
         query_result.put()
         self.redirect('/')
-      
+
+def sms_number(self, number, msg):
+        account = "AC2bca3b527c9d4be4956b0cb8374f981a"
+        token = "29ca474294d5555b1b3dc5ed046a40f8"
+        SIZE = 155
+        client = TwilioRestClient(account, token)
+        num_messages = len(msg) / SIZE + 1
+        number = number.strip().replace(" ", "").replace("-","")
+        if len(number) == 10:
+            if num_messages == 1:
+                client.sms.messages.create(to="+1"+number, from_="+15123944123", body=msg)
+            else:
+                for i in xrange(num_messages):
+                    client.sms.messages.create(to="+1"+number, from_="+15123944123",
+                        body="%d/%d: %s" % ((i+1), num_messages, msg[i*155:((i+1)*155)] ))
+                    
 class MainPage(webapp2.RequestHandler):
     def get(self):
         if users.get_current_user():
@@ -91,11 +121,13 @@ class MainPage(webapp2.RequestHandler):
         else:
             url = users.create_login_url(self.request.uri)
             url_linktext = 'Login'
-
+        event_query = Event.all().ancestor(event_key())
+        event_results = event_query.fetch(5)
         template_values = {
             'url_linktext': url_linktext,
             'url': url,
             'users': users,
+            'events' : event_results,
             'createEvent': '/create',
             'editRatings': '/ratings',
             'editPreferences': '/preferences' 
@@ -104,34 +136,36 @@ class MainPage(webapp2.RequestHandler):
         template = jinja_environment.get_template('index.html')
         self.response.out.write(template.render(template_values))
 
-class CreateEvent(webapp2.RequestHandler):
-    def get(self):
-        #create an event!
-        template_values2 = {
-            'eventName': 'Where are we going for lunch',
-            'time': '11:00AM',
-            'lockdownTime':'10:30AM',
-            #'inviteList': inviteList,,
-            'editPreferences': '/preferences' 
-        }
-        template2 = jinja_environment.get_template('createEvent.html')
-        self.response.out.write(template2.render(template_values2))
-
 class EventPage(webapp2.RequestHandler):
     def get(self):
         #create an event!
-        attending = ['Elynn', 'Alex', 'Ian', 'Joseph', 'Aaron']
-        template_values3 = {
-            'eventName': "CoCo's Cafe",
-            'eventDate': '10/21/2012',
-            'time': '11:00AM',
-            'lockdownTime':'10:30AM',
-            'attending': attending,
-            'editPreferences': '/preferences' 
-        }
-        template3 = jinja_environment.get_template('eventPage.html')
-        self.response.out.write(template3.render(template_values3))
+        event_name = self.request.get('name')
+        event_query = Event.all().ancestor(event_key())
+        query_results = event_query.fetch(40)
+        event_list = filter(lambda ev: ev.name == event_name, query_results)
+        if len(event_list) > 0:
+          event = event_list[0]
 
+          times = str(event.eventtime).split(' ')
+          
+          template_values3 = {
+              'eventName': event.name,
+              'eventDate': times[0],
+              'time': times[1],
+              'lockdownTime': event.lockdowntime,
+              'attending': event.attending,
+              'editPreferences': '/preferences' 
+          }
+          template3 = jinja_environment.get_template('eventpage.html')
+          self.response.out.write(template3.render(template_values3))
+    def post(self):
+      sms_number("817366934", "We're going to Coco's!")
+      sms_number("2816360878", "We're going to Coco's!")
+      sms_number("9792778103", "We're going to Coco's!")
+      sms_number("8183987590", "We're going to Coco's!")
+      sms_number("2817680595", "We're going to Coco's!")
+      self.redirect('/')
+                    
 class Restaurant(db.Model):
   name = db.StringProperty()
   location = db.StringProperty()
@@ -218,17 +252,8 @@ class Review(webapp2.RequestHandler):
     template3 = jinja_environment.get_template('restaurant.html')
     self.response.out.write(template3.render(template_values3))
 		
-class Event (db.Model):
-  name = db.StringProperty()
-  eventdate = db.DateTimeProperty()
-  eventtime = db.DateTimeProperty()
-  location = db.StringProperty()
-  lockdowntime = db.DateTimeProperty
-  invited = db.StringListProperty()
-  attending = db.StringListProperty()
 
-def event_key():
-  return db.Key.from_path('Events', 'default_event')  
+
 
 class CreateEvent(webapp2.RequestHandler):
     def get(self):
@@ -237,7 +262,7 @@ class CreateEvent(webapp2.RequestHandler):
         self.response.out.write(template2.render())
     def post(self):
         event = Event(parent=event_key())
-        event.name = self.request.get('name')
+        event.name = self.request.get('eventname')
         rawdate = self.request.get('eventdate')
         rawtime = self.request.get('eventtime')
         d = rawdate.split('/')
@@ -252,7 +277,9 @@ class CreateEvent(webapp2.RequestHandler):
           i.strip()
           invited2.append(i)
         event.invited = invited2
-        event.attending = [get_current_user_User().email,]
+        event.attending = invited2
+        event.attending.append(get_current_user_User().email)
+        #event.attending = [get_current_user_User().email,]
         event.put()
         self.redirect('/')
         #self.redirect('/?' + urllib.urlencode({'name': event.name}))

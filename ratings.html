@@ -7,7 +7,7 @@
 		<div id=wrapper>
 			<div id=header>
 			<a href="/">
-			<img src="/images/header.PNG" alt="header" >
+			<img src="/images/header.png" alt="header" >
 			</a>
 			</div>
 
@@ -17,7 +17,7 @@
                                             
 						{% for rest in restaurants %}
 							<form action="/ratings" method="post">
-							<br><a href="/ratings?name={{ rest[0].name }}">{{ rest[0].name }}</a> <input type="radio" name="rating" value="1">1<input type="radio" name="rating" value="2">2<input type="radio" name="rating" value="3">3<input type="radio" name="rating" value="4">4<input type="radio" name="rating" value">5&nbsp;&nbsp;&nbsp; {{ rest[1] }}
+							<br><a h ref="/ratings?name={{ rest[0].name }}">{{ rest[0].name }}</a> <input type="radio" name="rating" value="1">1<input type="radio" name="rating" value="2">2<input type="radio" name="rating" value="3">3<input type="radio" name="rating" value="4">4<input type="radio" name="rating" value">5&nbsp;&nbsp;&nbsp; {{ rest[1] }}
 							<input type="hidden" name="restaurantID" value="{{ rest[0].name}}">
 							<div><input type="submit" value="Update Ratings!"></div>
                                             </form>

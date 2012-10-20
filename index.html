@@ -8,7 +8,7 @@
     <div id=wrapper>
         <div id=header>
         <a href="/">
-        <img src="/images/header.PNG" alt="header" >
+        <img src="/images/header.png" alt="header" >
         </a>
         </div>
         
@@ -27,12 +27,12 @@
                     </div>
                     <div id=eventList>
                         <!-- display all the events that the user has/has had -->
-                        <h1>Upcoming Events</h1>
+                        <h1>Events</h1>
+                        {% for event in events %}
+							<a href="/viewevent?name={{event.name}}">{{event.name}}</a> on {{event.eventtime}}
+							<br />
+                        {% endfor %}
                         <br />
-                        <h2>Past Events</h2>
-                        <!--{% for event in events %}
-                        print out the names as links!
-                        {% endfor %}-->
                     </div>
             {% else %}
                 <!--show login page -->
