@@ -1,0 +1,34 @@
+<html>
+	<head>
+	    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	    <title>Lunch Break! {{displayName}} </title>
+	</head>
+	<body>
+		<div id=wrapper>
+			<div id=header>
+			<a href="/">
+			<img src="/images/header.PNG" alt="header" >
+			</a>
+			</div>
+		
+			<div id=main>
+				<h1><b>Edit Profile</b></h1>
+				<form action="/preferences" method="post">
+					<p><b>Display Name: </b>
+						<div><textarea name="displayname" rows="1" cols="20">{{ displayname }}</textarea></div>
+					</p>
+					<p><b>Phone Number: </b>
+						<div><textarea name="phonenumber" rows="1" cols="15">{{ phonenumber }}</textarea></div>
+					</p>
+					<p><b>Text Alerts:</b>
+						<input type="checkbox" name="textalert" checked="{{ textalerts }}">
+					</p>
+					<div><input type="submit" value="Submit!"></div>
+				</form>
+			</div>
+			<div id=footer>
+				<a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a>
+			</div>
+		</div>
+	</body>
+</html>
