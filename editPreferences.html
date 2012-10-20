@@ -12,22 +12,22 @@
 			</div>
 		
 			<div id=main>
-				<h1><b>Edit Profile</b></h1>
+				<div id=eventname>Edit Profile</div>
 				<form action="/preferences" method="post">
 					<p><b>Display Name: </b>
-						<div><textarea name="displayname" rows="1" cols="20">{{ displayname }}</textarea></div>
+						<div><textarea name="displayname" rows="1" cols="20" value="{{ displayName }}">{{ displayName }}</textarea></div>
 					</p>
 					<p><b>Phone Number: </b>
-						<div><textarea name="phonenumber" rows="1" cols="15">{{ phonenumber }}</textarea></div>
+						<div><textarea name="phonenumber" value="{{ phoneNumber }}"rows="1" cols="15"></textarea></div>
 					</p>
 					<p><b>Text Alerts:</b>
-						<input type="checkbox" name="textalert" checked="{{ textalerts }}">
+						<input type="checkbox" name="textalert" checked="{{ textAlerts }}">
 					</p>
 					<div><input type="submit" value="Submit!"></div>
 				</form>
 			</div>
 			<div id=footer>
-				<a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a>
+			    <a href="">About</a> | <a href="{{ url }}">Logout</a> | <a href="" >Contact</a> | <a href="{{ editPreferences }}">User Profile</a>
 			</div>
 		</div>
 	</body>
